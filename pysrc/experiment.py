@@ -15,7 +15,7 @@ class BanditExperiment(object):
 
     def random_walk(self):
         """Randomly moves all of the arms"""
-        walk = np.random.normal(loc=0, scale=1.0, size=(len(self.bandit_means)))
+        walk = np.random.normal(loc=0, scale=0.01**2, size=(len(self.bandit_means)))
         self.bandit_means += walk
 
     def optimal_action(self):

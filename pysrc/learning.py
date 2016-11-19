@@ -30,7 +30,7 @@ class SimpleBandit(object):
         self.step_size = step_size
 
     def get_action(self):
-        if self.epsilon <= np.random.random():
+        if self.epsilon >= np.random.random():
             return np.random.randint(len(self.bandit_estimates))
         return np.argmax(self.bandit_estimates)
 
