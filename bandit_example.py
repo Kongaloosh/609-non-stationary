@@ -1,9 +1,14 @@
 from pysrc.experiment import BanditExperiment
 from pysrc.learning import BanditSampleAverage, SimpleBandit
 import matplotlib.pyplot as plt
+import numpy as np
 
 __author__ = 'kongaloosh'
 
+simple_average_reward = np.zeros(10000)
+simple_average_optimal = np.zeros(10000)
+simple_bandit_reward = np.zeros(10000)
+simple_bandit_optimal = np.zeros(10000)
 
 class bandit_example(object):
 
@@ -40,7 +45,8 @@ class bandit_example(object):
 
     def average_update(self, episode_number):
         episode_number += 1
-        average_action = self.simple_average.get_action()                                       # pick an action
+        average_action \
+            = self.simple_average.get_action()                                       # pick an action
         reward = self.problem.action(average_action)                                            # observe reward
         self.simple_average_reward_count += reward                                              # update reward count
         optimal_action = self.problem.optimal_action()
@@ -56,26 +62,42 @@ class bandit_example(object):
 
     def run_experiment(self):
         self.problem.random_walk()
-        print(self.problem.bandit_means)
-        print(self.problem.optimal_action())
-        for i in range(1000):
+        for i in range(10000):
             self.average_update(i)
             self.bandit_update(i)
             # self.problem.random_walk()
 
 
 if __name__ == "__main__":
-    experiment = bandit_example()
-    experiment.run_experiment()
+    for i in range(2000):
+        experiment = bandit_example()
+        experiment.run_experiment()
+        simple_average_optimal += experiment.simple_average_optimal
+        simple_bandit_optimal += experiment.simple_bandit_optimal
+        simple_average_reward += experiment.simple_average_rewards
+        simple_bandit_reward += experiment.simple_bandit_rewards
+
+    simple_average_optimal /= 2000
+    simple_bandit_optimal /= 2000
+    simple_average_reward /= 2000
+    simple_bandit_reward /= 2000
+
+
     plt.figure(0)
-    plt.title("% optimal actions")
-    plt.plot(experiment.simple_average_optimal)
-    plt.plot(experiment.simple_bandit_optimal)
+    plt.subplot(1, 2, 1)
+    plt.title("")
+    plt.ylabel("% optimal actions")
+    plt.xlabel("Steps")
+    plt.plot(simple_average_optimal, label='simple average')
+    plt.plot(simple_bandit_optimal, label='bandit')
 
-    plt.figure(1)
+    plt.subplot(1, 2, 2)
 
-    plt.title("Avg rewards")
-    plt.plot(experiment.simple_average_rewards)
-    plt.plot(experiment.simple_bandit_rewards)
+    plt.title("")
+    plt.ylabel("Average Reward")
+    plt.xlabel("Steps")
+    plt.plot(simple_average_reward, label='simple average')
+    plt.plot(simple_bandit_reward, label='bandit ')
 
+    plt.legend()
     plt.show()
