@@ -1,7 +1,10 @@
+import random
+random.seed(1994)
 from pysrc.experiment import BanditExperiment
 from pysrc.learning import BanditSampleAverage, SimpleBandit
 import matplotlib.pyplot as plt
 import numpy as np
+import pickle as pkl
 
 __author__ = 'kongaloosh'
 
@@ -9,14 +12,16 @@ __author__ = 'kongaloosh'
 
 class bandit_example(object):
 
-    def __init__(self, epsilon, bandit_experiment=None):
+    def __init__(self, epsilon, bandit_experiment_means=None):
         self.simple_average = BanditSampleAverage(number_of_arms=10, epsilon=epsilon)
         self.simple_bandit = SimpleBandit(number_of_arms=10, epsilon=epsilon, step_size=0.01)
 
-        if bandit_experiment:                                   # if we provided a specific bandit, use it
-            self.problem = bandit_experiment
-        else:                                                   # otherwise make one
-            self.problem = BanditExperiment(number_of_arms=10)
+        self.problem = BanditExperiment(number_of_arms=10)
+        if bandit_experiment_means is not None:                 # if we provided a specific bandit, use it
+            self.problem.bandit_means = \
+                np.copy(bandit_experiment_means)                # make a copy of provided means
+        else:                                                   # otherwise move the means randomly
+            self.problem.random_walk()
 
         self.simple_average_rewards = list()                    # the lists to store rewards
         self.simple_average_optimal = list()
@@ -64,35 +69,41 @@ class bandit_example(object):
 if __name__ == "__main__":
     epsilons = [1/128., 1/64., 1/32., 1/16., 1/8., 1/4., 1/2.]          # the epsilons we sweep over
     timesteps = 200000                                                  # the number of timesteps per trial
-    # timesteps = 1000
     bandit = []                                                         # where the avg performan
     sample_average = []
     optimal = []
 
-    bandit_experiment = BanditExperiment(number_of_arms=10)     # initialize bandit problem
-    bandit_experiment.random_walk()                             # move each arm randomly
-    print(bandit_experiment.bandit_means)
+    initial_bandit_means = np.random.normal(loc=0, scale=1, size=10)    # our sample means
+
     for epsilon in epsilons:                                    # for all the epsilon values we want to check
         bandit_sample = []                                      # the reward for each trial
         sample_average_sample = []                              # the sample avg for each trial
         optimal_sample = []                                     # the reward for optimal choices
         print(epsilon)
-        experiment = bandit_example(epsilon, bandit_experiment)             # create a new experiment to run
-        print(experiment.problem.optimal_action())
-        for i in range(100):                                                # averaged over 100 trials
+        for i in range(1000):                                                # averaged over 100 trials
+            experiment = bandit_example(
+                epsilon=epsilon,
+                bandit_experiment_means=initial_bandit_means)     # create a new experiment to run
+            print(i)
             experiment.run_experiment(timesteps)                            # run experiment
             # add the averaged reward for each method to the avg performance list
             bandit_sample.append(experiment.simple_bandit_reward_count/(timesteps/2))
             sample_average_sample.append(experiment.simple_average_reward_count/(timesteps/2))
             optimal_sample.append(experiment.optimal_action/(timesteps/2))
-
         # find the mean performance for the given epsilon and record it
         bandit.append(np.mean(bandit_sample))
         sample_average.append(np.mean(sample_average_sample))
         optimal.append(np.mean(optimal_sample))
 
+
+    pkl.dump(bandit, open('value_action',"wb"))
+    pkl.dump(sample_average, open('sample_average',"wb"))
+    pkl.dump(optimal, open('optimal',"wb"))
+
+
     plt.title("The Average Reward From a 10-armed bandit over 100 trials")
     plt.ylabel("Average Reward")
+    plt.xlim([-1, 1])
     plt.xlabel("Steps")
     plt.xticks(range(len(epsilons)), epsilons)
     plt.plot(bandit, label="step size")

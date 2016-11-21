@@ -8,6 +8,7 @@ class BanditSampleAverage(object):
     def __init__(self, number_of_arms, epsilon):
         self.number_of_steps = 0
         self.bandit_estimates = np.zeros(number_of_arms)
+        # self.bandit_estimates = np.ones(number_of_arms)*10
         self.bandit_visits = np.zeros(number_of_arms)
         self.epsilon = epsilon
 
@@ -26,6 +27,7 @@ class SimpleBandit(object):
     def __init__(self, number_of_arms, epsilon, step_size):
         self.number_of_steps = 0
         self.bandit_estimates = np.zeros(number_of_arms)
+        # self.bandit_estimates = np.ones(number_of_arms)*10
         self.epsilon = epsilon
         self.step_size = step_size
 
