@@ -76,8 +76,9 @@ if __name__ == "__main__":
     initial_bandit_means = np.random.normal(loc=0, scale=1, size=10)    # our sample means
 
     # ==============================================================================================
-    #                                   WITHOUT RANDOM WALK
+    #                                   WITH RANDOM WALK
     # ==============================================================================================
+
     for epsilon in epsilons:                                    # for all the epsilon values we want to check
         bandit_sample = []                                      # the reward for each trial
         sample_average_sample = []                              # the sample avg for each trial
@@ -88,7 +89,7 @@ if __name__ == "__main__":
                 epsilon=epsilon,
                 bandit_experiment_means=initial_bandit_means)     # create a new experiment to run
             print(i)
-            experiment.run_experiment(timesteps)                            # run experiment
+            experiment.run_experiment(timesteps, walk=True)                            # run experiment
             # add the averaged reward for each method to the avg performance list
             bandit_sample.append(experiment.simple_bandit_reward_count/(timesteps/2))
             sample_average_sample.append(experiment.simple_average_reward_count/(timesteps/2))
@@ -99,9 +100,9 @@ if __name__ == "__main__":
         optimal.append(np.mean(optimal_sample))
 
 
-    pkl.dump(bandit, open('value_action',"wb"))
-    pkl.dump(sample_average, open('sample_average',"wb"))
-    pkl.dump(optimal, open('optimal',"wb"))
+    pkl.dump(bandit, open('value_action_walk',"wb"))
+    pkl.dump(sample_average, open('sample_average_walk',"wb"))
+    pkl.dump(optimal, open('optimal_walk',"wb"))
 
 
     plt.title("The Average Reward From a 10-armed bandit over 100 trials")

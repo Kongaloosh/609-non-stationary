@@ -5,10 +5,13 @@ __author__ = 'kongaloosh'
 
 class BanditSampleAverage(object):
 
-    def __init__(self, number_of_arms, epsilon):
+    def __init__(self, number_of_arms, epsilon, optimmistic=False):
         self.number_of_steps = 0
-        self.bandit_estimates = np.zeros(number_of_arms)
-        # self.bandit_estimates = np.ones(number_of_arms)*10
+        if optimmistic:
+            self.bandit_estimates = np.ones(number_of_arms)*10
+        else:
+            self.bandit_estimates = np.zeros(number_of_arms)
+
         self.bandit_visits = np.zeros(number_of_arms)
         self.epsilon = epsilon
 
@@ -24,10 +27,13 @@ class BanditSampleAverage(object):
 
 class SimpleBandit(object):
 
-    def __init__(self, number_of_arms, epsilon, step_size):
+    def __init__(self, number_of_arms, epsilon, step_size, optimistic=False):
         self.number_of_steps = 0
-        self.bandit_estimates = np.zeros(number_of_arms)
-        # self.bandit_estimates = np.ones(number_of_arms)*10
+        if optimistic:
+            self.bandit_estimates = np.ones(number_of_arms)*10
+        else:
+            self.bandit_estimates = np.zeros(number_of_arms)
+
         self.epsilon = epsilon
         self.step_size = step_size
 
