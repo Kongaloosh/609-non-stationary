@@ -56,9 +56,10 @@ class bandit_example(object):
             self.simple_average_optimal.append(0)
         self.simple_average_rewards.append(reward)
 
-    def run_experiment(self, walk=False):
+    def run_experiment(self, walk=False, initial_means=None):
         """ initializes a new problem"""
-        # self.problem.random_walk()                      #
+        if initial_means is not None:
+            self.problem.bandit_means = np.copy(initial_means)
         for step in range(10000):                      # for X many pulls
             self.average_update(step)                  # take a step with the sample average
             self.bandit_update(step)                   # take a step with the action-value
@@ -67,32 +68,36 @@ class bandit_example(object):
 
 
 if __name__ == "__main__":
+    initial_bandit_means = np.random.normal(loc=0, scale=1, size=10)    # our sample means
+    print(initial_bandit_means)
     simple_average_reward = np.zeros(10000)
     simple_average_optimal = np.zeros(10000)
     simple_bandit_reward = np.zeros(10000)
     simple_bandit_optimal = np.zeros(10000)
 
-    for i in range(2000):
+    number_of_runs = 6000
+
+    for i in range(number_of_runs):
         if i % 100 == 0:
             print(i)
         experiment = bandit_example()
-        experiment.run_experiment()
+        experiment.run_experiment(initial_means=initial_bandit_means)
         simple_average_optimal += experiment.simple_average_optimal
         simple_bandit_optimal += experiment.simple_bandit_optimal
         simple_average_reward += experiment.simple_average_rewards
         simple_bandit_reward += experiment.simple_bandit_rewards
 
-    simple_average_optimal /= 2000                                      # avg the outcomes by the number runs
-    simple_bandit_optimal /= 2000
-    simple_average_reward /= 2000
-    simple_bandit_reward /= 2000
+    simple_average_optimal /= number_of_runs                             # avg the outcomes by the number runs
+    simple_bandit_optimal /= number_of_runs
+    simple_average_reward /= number_of_runs
+    simple_bandit_reward /= number_of_runs
 
 
     plt.figure(0, figsize=(15,10))
     plt.suptitle("Action Value and Sample Average Performance With Optimistic Initialization")
     plt.subplot(2, 2, 1)
     plt.xlim([-100, 10100])
-    plt.title("Percent Optimal Actions Averaged over 2000 Trials Without Random Walk")
+    plt.title("Percent Optimal Actions Averaged over {0} Trials Without Random Walk".format(number_of_runs), size=15)
     plt.ylabel("% optimal actions")
     plt.xlabel("Steps")
     plt.plot(simple_average_optimal, label='Simple Average')
@@ -101,7 +106,7 @@ if __name__ == "__main__":
 
     plt.subplot(2, 2, 2)
     plt.xlim([-100, 10100])
-    plt.title("Average Reward Averaged over 2000 Trials Without Random Walk")
+    plt.title("Average Reward Averaged over {0} Trials Without Random Walk".format(number_of_runs), size=15)
     plt.ylabel("Average Reward")
     plt.xlabel("Steps")
     plt.plot(simple_average_reward, label='Simple Average')
@@ -113,7 +118,7 @@ if __name__ == "__main__":
     simple_bandit_reward = np.zeros(10000)
     simple_bandit_optimal = np.zeros(10000)
 
-    for i in range(2000):
+    for i in range(number_of_runs):
         if i % 100 == 0:
             print(i)
         experiment = bandit_example()
@@ -123,14 +128,14 @@ if __name__ == "__main__":
         simple_average_reward += experiment.simple_average_rewards
         simple_bandit_reward += experiment.simple_bandit_rewards
 
-    simple_average_optimal /= 2000
-    simple_bandit_optimal /= 2000
-    simple_average_reward /= 2000
-    simple_bandit_reward /= 2000
+    simple_average_optimal /= number_of_runs
+    simple_bandit_optimal /= number_of_runs
+    simple_average_reward /= number_of_runs
+    simple_bandit_reward /= number_of_runs
 
     plt.subplot(2, 2, 3)
     plt.xlim([-100, 10100])
-    plt.title("Percent Optimal Actions Averaged over 2000 Trials With Random Walk")
+    plt.title("Percent Optimal Actions Averaged over {0} Trials With Random Walk".format(number_of_runs), size=15)
     plt.ylabel("% optimal actions")
     plt.xlabel("Steps")
     plt.plot(simple_average_optimal, label='Simple Average')
@@ -139,7 +144,7 @@ if __name__ == "__main__":
 
     plt.subplot(2, 2, 4)
     plt.xlim([-100, 10100])
-    plt.title("Average Reward Averaged over 2000 Trials With Random Walk")
+    plt.title("Average Reward Averaged over {0} Trials With Random Walk".format(number_of_runs), size=15)
     plt.ylabel("Average Reward")
     plt.xlabel("Steps")
     plt.plot(simple_average_reward, label='Simple Average')
