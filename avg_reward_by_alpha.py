@@ -59,10 +59,10 @@ class bandit_example(object):
             self.optimal_action += self.problem.action(self.problem.optimal_action())
 
     def run_experiment(self, timesteps):
-        for i in range(timesteps):
-            self.average_update(i)                                      # update the sample average
-            self.bandit_update(i)                                       # update the step-size action-value
-            self.true_action(i)                                         # update the bandit action
+        for step in range(timesteps):
+            self.average_update(step)                                   # update the sample average
+            self.bandit_update(step)                                    # update the step-size action-value
+            self.true_action(step)                                      # update the bandit action
             self.problem.random_walk()                                  # take a random walk
 
 
