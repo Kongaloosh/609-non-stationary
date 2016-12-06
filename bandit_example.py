@@ -35,10 +35,10 @@ class bandit_example(object):
         # if the chosen action was optimal, or has the same value as the optimal action...
         if optimal_action == bandit_action or \
                 self.problem.bandit_means[optimal_action] == self.problem.bandit_means[bandit_action]:
-            self.simple_bandit_optimal_count += 1                                           # ... add to the count
-
-        self.simple_bandit_optimal.append(self.simple_bandit_optimal_count/episode_number)  # add % optimal
-        self.simple_bandit_rewards.append(self.simple_bandit_reward_count/episode_number)   # add avg reward
+            self.simple_bandit_optimal.append(1)                                            # add % optimal
+        else:
+            self.simple_bandit_optimal.append(0)                                            # add % optimal
+        self.simple_bandit_rewards.append(reward)                                           # add avg reward
 
     def average_update(self, episode_number):
         episode_number += 1                                                                 # move to next episode
@@ -51,10 +51,10 @@ class bandit_example(object):
         # if the chosen action was optimal, or has the same value as the optimal action...
         if optimal_action == average_action or \
                 self.problem.bandit_means[optimal_action] == self.problem.bandit_means[average_action]:
-            self.simple_average_optimal_count += 1                                          # ... add to the count
-
-        self.simple_average_optimal.append(self.simple_average_optimal_count/episode_number)
-        self.simple_average_rewards.append(self.simple_average_reward_count/episode_number)
+            self.simple_average_optimal.append(1)
+        else:
+            self.simple_average_optimal.append(0)
+        self.simple_average_rewards.append(reward)
 
     def run_experiment(self, walk=False):
         """ initializes a new problem"""
