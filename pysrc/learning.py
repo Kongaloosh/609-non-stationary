@@ -46,3 +46,19 @@ class SimpleBandit(object):
         self.number_of_steps += 1
         self.bandit_estimates[arm] += self.step_size * (observation - self.bandit_estimates[arm])
 
+class UCB(object):
+
+    def __init__(self, step_size, number_of_arms, c):
+        self.bandit_estimates = np.zeros(number_of_arms)
+        self.bandit_visits = np.zeros(number_of_arms)
+        self.c = c
+        self.number_of_steps = 0
+        self.step_size = step_size
+
+    def get_action(self, t):
+        return np.argmax(self.bandit_estimates + self.c * np.sqrt(np.log(t)/self.bandit_visits))
+
+    def update_average(self, arm, observation):
+        self.number_of_steps += 1
+        self.bandit_estimates[arm] += self.step_size * (observation - self.bandit_estimates[arm])
+        self.bandit_visits[arm] += 1
