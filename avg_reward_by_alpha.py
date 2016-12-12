@@ -2,6 +2,8 @@ import random
 random.seed(1994)
 from pysrc.experiment import BanditExperiment
 from pysrc.learning import BanditSampleAverage, SimpleBandit, UCB
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from multiprocessing import Pool
@@ -91,7 +93,8 @@ def run_trial(epsilon):
     ucb_sample = []
     optimal_sample = []                                     # the reward for optimal choices
     # print(epsilon, epsilons.index(epsilon), (bandit[epsilons.index(epsilon)]))
-    for i in range(1000):                                   # averaged over 100 trials
+    print(epsilon)
+    for i in range(2000):                                   # averaged over 100 trials
         experiment = bandit_example(
             epsilon=epsilon,
             bandit_experiment_means=initial_bandit_means)     # create a new experiment to run
@@ -107,7 +110,7 @@ def run_trial(epsilon):
     bandit_wrapper[index] = np.mean(bandit_sample)
     sample_average_wrapper[index] = np.mean(sample_average_sample)
     ucb_wrapper[index] = np.mean(ucb_sample)
-    optimal_sample[index] = np.mean(optimal_sample)
+    optimal_wrapper[index] = np.mean(optimal_sample)
     return bandit_wrapper, sample_average_wrapper, ucb_wrapper, optimal_wrapper
 
 
@@ -124,21 +127,26 @@ if __name__ == "__main__":
     # ==============================================================================================
     #                                   WITHOUT RANDOM WALK
     # ==============================================================================================
-
-    p = Pool(6)
+    # try:
+    # (bandit, sample_average, ucb, optimal) = pkl.load(open('pool_sweep', 'r'))
+    # except:
+    p = Pool(3)
     results = p.map(run_trial, epsilons)
     p.close()
     bandit, sample_average, ucb, optimal = np.sum(results, axis=0)
-    pkl.dump((bandit,sample_average,ucb,optimal), open('pool_sweep', "wb"))
-
-    plt.title("The Average Reward From a 10-armed bandit over 100 trials")
+    pkl.dump((bandit,sample_average,ucb,optimal), open('statpools_sweep_long', "wb"))
+    plt.figure(figsize=(15,10))
+    plt.subplot(121)
+    plt.title("The Average Reward From a 10-armed bandit over 1000 trials")
     plt.ylabel("Average Reward")
-    plt.xlim([-1, 1])
+    plt.xlim([-1, 5])
     plt.xlabel("Epsilon / C")
     plt.xticks(range(len(epsilons)), ['1/128.', '1/64.', '1/32.', '1/16.', '1/8.', '1/4.', '1/2.', '1', '2', '4'])
     plt.plot(bandit, label="action-value")
     plt.plot(sample_average, label="sample average")
     plt.plot(ucb, label="UCB")
     plt.plot(optimal, label="optimal")
-    plt.legend()
-    plt.show()
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig('statfoo_slong.png')
+    plt.savefig('statfoo_slong.pdf')
+    # plt.show()
