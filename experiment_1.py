@@ -7,11 +7,13 @@ import numpy as np
 
 __author__ = 'kongaloosh'
 
+
 class bandit_example(object):
 
     def __init__(self):
+        """Initializes the Experiment with a sample-average and exponential average"""
         self.simple_average = BanditSampleAverage(number_of_arms=10, epsilon=0.1)           # sample average
-        self.simple_bandit = SimpleBandit(number_of_arms=10, epsilon=0.1, step_size=0.01)   # action-value learner
+        self.simple_bandit = SimpleBandit(number_of_arms=10, epsilon=0.1, step_size=0.1)   # action-value learner
         self.problem = BanditExperiment(number_of_arms=10)                                  # source of data
 
         self.simple_average_rewards = list()
@@ -25,6 +27,7 @@ class bandit_example(object):
         self.simple_bandit_reward_count = 0.
 
     def bandit_update(self, episode_number):
+        """Initializes the experiment: creates a """
         episode_number += 1                                                                 # move to next episode
         bandit_action = self.simple_bandit.get_action()                                     # pick an action
         reward = self.problem.action(bandit_action)                                         # observe reward
