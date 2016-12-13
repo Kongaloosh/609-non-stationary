@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+import pickle as pkl
+__author__ = 'kongaloosh'
+epsilons = [1/128., 1/64., 1/32., 1/16., 1/8., 1/4., 1/2., 1, 2, 4]
+(bandit, sample_average, ucb, optimal) = pkl.load(open('statpools_sweep_long', "r"))
+plt.figure(figsize=(20, 8))
+
+plt.suptitle("The Average Reward From a 10-armed bandit over 2000 trials")
+plt.subplot(121)
+plt.title("Without Random Walk")
+plt.ylabel("Average Reward")
+plt.xlabel("Epsilon / C")
+plt.xscale('log', basex=2)
+plt.xlim([1/200., 5])
+plt.xticks(epsilons, ['1/128.', '1/64.', '1/32.', '1/16.', '1/8.', '1/4.', '1/2.', '1', '2', '4'])
+plt.plot(epsilons[:6], bandit[:6], label="action-value")
+plt.plot(epsilons[:6], sample_average[:6], label="sample average")
+plt.plot(epsilons[3:], ucb[3:], label="UCB")
+plt.plot(epsilons, optimal, label="optimal")
+plt.legend(bbox_to_anchor=(0, 0), loc=3, borderaxespad=0.)
+
+(bandit, sample_average, ucb, optimal) = pkl.load(open('pools_sweep_long', "r"))
+plt.subplot(122)
+plt.title("The Average Reward From a 10-armed bandit over 2000 trials")
+plt.ylabel("With Random Walk")
+plt.xscale('log', basex=2)
+plt.xlim([1/200., 5])
+plt.xticks(epsilons, ['1/128.', '1/64.', '1/32.', '1/16.', '1/8.', '1/4.', '1/2.', '1', '2', '4'])
+plt.plot(epsilons[:6], bandit[:6], label="action-value")
+plt.plot(epsilons[:6], sample_average[:6], label="sample average")
+plt.plot(epsilons[3:], ucb[3:], label="UCB")
+plt.plot(epsilons, optimal, label="optimal")
+plt.legend(bbox_to_anchor=(0, 0), loc=3, borderaxespad=0.)
+plt.savefig('parameter_sweep.png')
+plt.savefig('parameter_sweep.pdf')
+plt.show()
